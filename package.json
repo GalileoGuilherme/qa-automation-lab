@@ -1,0 +1,14 @@
+{
+  "name": "qa-automation-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cypress end-to-end tests for the Automação QA practice store.",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:chrome": "cypress run --browser chrome"
+  },
+  "devDependencies": {
+    "cypress": "^16.2.0"
+  }
+}
