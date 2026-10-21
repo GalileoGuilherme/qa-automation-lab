@@ -46,16 +46,3 @@ npm run cy:run
 ```
 
 The specs use stable element IDs from the practice page. Test accounts and checkout information are fictitious and are held only in the demo application's memory.
-
-## GitHub
-
-Create a new **public** repository named `qa-automation-lab` without initializing a README, then connect this project and push:
-
-```bash
-git init
-git add .
-git commit -m "Set up Cypress automation project"
-git branch -M main
-git remote add origin https://github.com/GalileoGuilherme/qa-automation-lab.git
-git push -u origin main
-```
