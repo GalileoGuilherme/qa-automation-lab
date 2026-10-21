@@ -10,6 +10,7 @@ O projeto foi criado para praticar leitura de requisitos, seletores estáveis, c
 
 - [O que você vai encontrar](#o-que-você-vai-encontrar)
 - [Pré-requisitos](#pré-requisitos)
+- [Criar um projeto a partir do template](#criar-um-projeto-a-partir-do-template)
 - [Instalação](#instalação)
 - [Como executar](#como-executar)
 - [Configuração da URL](#configuração-da-url)
@@ -35,18 +36,32 @@ O projeto foi criado para praticar leitura de requisitos, seletores estáveis, c
 
 O Cypress também pode executar a suíte no Electron empacotado com ele usando `cy:run`. O Electron está marcado pelo Cypress como navegador descontinuado; para os cenários de eventos reais de teclado, prefira o Chrome.
 
-## Instalação
+## Criar um projeto a partir do template
 
-No terminal, acesse a pasta deste projeto e instale as dependências:
+1. Acesse o repositório [QA Automation Lab](https://github.com/GalileoGuilherme/qa-automation-lab) no GitHub.
+2. Clique em **Use this template** e selecione **Create a new repository**.
+3. Escolha o proprietário, defina o nome e a visibilidade do novo repositório e clique em **Create repository**.
+4. Clone o repositório que acabou de criar — não o repositório do template:
 
 ```bash
-npm install
+git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
+cd SEU-REPOSITORIO
 ```
 
-Para uma instalação reproduzível, por exemplo em CI:
+Substitua `SEU-USUARIO` e `SEU-REPOSITORIO` pelos valores escolhidos no GitHub. Depois, instale as dependências conforme a próxima seção.
+
+## Instalação
+
+Na pasta do repositório criado a partir do template, instale as dependências registradas no lockfile:
 
 ```bash
 npm ci
+```
+
+Use `npm install` quando precisar atualizar ou adicionar dependências:
+
+```bash
+npm install
 ```
 
 ## Como executar
@@ -125,7 +140,7 @@ Também é possível criar um arquivo `.env` local para guardar configurações 
 ## Estrutura do projeto
 
 ```text
-qa-automation-lab/
+seu-repositorio/
 ├── cypress/
 │   ├── e2e/
 │   │   ├── authentication.cy.js  # Login, cadastro e exercícios de autenticação
