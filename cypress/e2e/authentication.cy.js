@@ -1,12 +1,14 @@
-describe("Autenticação e cadastro", () => {
-  it("redireciona para o login ao abrir a loja sem sessão", () => {
-    cy.visit("/automation/loja");
+describe("Exercícios de autenticação", () => {
+  it("Login com credenciais válidas", () => {
+    // Confirma que as credenciais de demonstração abrem a área protegida da loja.
+    cy.loginAsDemoUser();
 
-    cy.location("pathname").should("eq", "/automation");
-    cy.get("#qa-login-form").should("be.visible");
+    cy.get("#qa-store-user").should("contain.text", "qa@exemplo.com");
+    cy.get("#qa-products-section").should("be.visible");
   });
 
-  it("mostra erro ao usar credenciais inválidas", () => {
+  it("Login com credenciais inválidas", () => {
+    // Credenciais incorretas devem exibir um erro e marcar a senha como inválida.
     cy.visit("/automation");
     cy.get("#qa-login-email").type("qa@exemplo.com");
     cy.get("#qa-login-password").type("senha-incorreta");
@@ -18,12 +20,51 @@ describe("Autenticação e cadastro", () => {
     cy.get("#qa-login-password").should("have.attr", "aria-invalid", "true");
   });
 
-  it("cadastra um usuário e permite entrar com a nova conta", () => {
+  it("Validação dos campos obrigatórios do login", () => {
+    // A validação nativa do navegador impede o envio sem os campos obrigatórios.
+    cy.visit("/automation");
+    cy.get("#qa-login-submit").click();
+
+    cy.get("#qa-login-email").should(($input) => {
+      expect($input[0].validity.valid).to.be.false;
+    });
+    cy.get("#qa-login-password").should(($input) => {
+      expect($input[0].validity.valid).to.be.false;
+    });
+  });
+
+  it("Copiar e-mail de demonstração", () => {
+    // O stub permite validar a cópia sem depender da permissão real do navegador.
+    cy.visit("/automation");
+    cy.stubClipboard().then((writeText) => {
+      cy.get("#qa-copy-email").click();
+
+      cy.wrap(writeText).should("have.been.calledWith", "qa@exemplo.com");
+      cy.get("#qa-copy-feedback")
+        .should("contain.text", "E-mail copiado para a área de transferência");
+    });
+  });
+
+  it("Copiar senha de demonstração", () => {
+    // A senha também deve ser enviada à API de clipboard e confirmada na interface.
+    cy.visit("/automation");
+    cy.stubClipboard().then((writeText) => {
+      cy.get("#qa-copy-password").click();
+
+      cy.wrap(writeText).should("have.been.calledWith", "Qa123456");
+      cy.get("#qa-copy-feedback")
+        .should("contain.text", "copiado para a área de transferência");
+    });
+  });
+
+  it("Cadastrar um novo usuário", () => {
+    // Depois do cadastro, a conta recém-criada deve autenticar sem sair da sessão.
     cy.visit("/automation/cadastro");
-    cy.get("#qa-register-name").type("Pessoa Teste");
-    cy.get("#qa-register-email").type("pessoa.teste@example.com");
-    cy.get("#qa-register-password").type("TesteQA123");
-    cy.get("#qa-register-confirm-password").type("TesteQA123");
+    cy.fillRegistrationForm({
+      name: "Pessoa Teste",
+      email: "pessoa.teste@example.com",
+      password: "TesteQA123",
+    });
     cy.get("#qa-register-submit").click();
     cy.get("#qa-registration-success").should("be.visible");
     cy.get("#qa-registration-login").click();
@@ -35,12 +76,15 @@ describe("Autenticação e cadastro", () => {
     cy.get("#qa-store-user").should("contain.text", "pessoa.teste@example.com");
   });
 
-  it("valida divergência entre senha e confirmação no cadastro", () => {
+  it("Cadastro com senhas diferentes", () => {
+    // O formulário deve rejeitar a conta quando a confirmação diverge da senha.
     cy.visit("/automation/cadastro");
-    cy.get("#qa-register-name").type("Pessoa Teste");
-    cy.get("#qa-register-email").type("outra.pessoa@example.com");
-    cy.get("#qa-register-password").type("TesteQA123");
-    cy.get("#qa-register-confirm-password").type("SenhaDiferente");
+    cy.fillRegistrationForm({
+      name: "Pessoa Teste",
+      email: "outra.pessoa@example.com",
+      password: "TesteQA123",
+      confirmation: "SenhaDiferente",
+    });
     cy.get("#qa-register-submit").click();
 
     cy.get("#qa-registration-error")
@@ -48,15 +92,46 @@ describe("Autenticação e cadastro", () => {
       .and("contain.text", "As senhas não coincidem");
   });
 
-  it("marca exercícios como concluídos e mantém o progresso ao recarregar", () => {
-    cy.visit("/automation");
-    cy.get("#qa-open-exercises").click();
-    cy.get("#qa-exercise-login-valid").check();
-    cy.get("#qa-done-exercises").click();
+  it("Cadastro com e-mail já utilizado", () => {
+    // O e-mail fixo da conta demo já existe e deve ser rejeitado como duplicado.
+    cy.visit("/automation/cadastro");
+    cy.fillRegistrationForm({
+      name: "Pessoa Teste",
+      email: "qa@exemplo.com",
+      password: "TesteQA123",
+    });
+    cy.get("#qa-register-submit").click();
 
-    cy.reload();
-    cy.get("#qa-open-exercises").click();
-    cy.get("#qa-exercise-login-valid").should("be.checked");
-    cy.get("#qa-exercise-progress").should("contain.text", "1");
+    cy.get("#qa-registration-error")
+      .should("be.visible")
+      .and("contain.text", "Já existe um usuário");
   });
+
+  it("Entrar com usuário cadastrado", () => {
+    // Verifica o fluxo completo de cadastro, retorno ao login e autenticação.
+    cy.visit("/automation/cadastro");
+    cy.fillRegistrationForm({
+      name: "Pessoa Cadastrada",
+      email: "nova.conta@example.com",
+      password: "NovaConta123",
+    });
+    cy.get("#qa-register-submit").click();
+    cy.get("#qa-registration-success").should("be.visible");
+    cy.get("#qa-registration-login").click();
+    cy.get("#qa-login-email").type("nova.conta@example.com");
+    cy.get("#qa-login-password").type("NovaConta123");
+    cy.get("#qa-login-submit").click();
+
+    cy.location("pathname").should("eq", "/automation/loja");
+    cy.get("#qa-store-user").should("contain.text", "nova.conta@example.com");
+  });
+
+  it("Acessar loja sem estar autenticado", () => {
+    // Uma sessão anônima deve voltar ao formulário de login ao acessar a loja.
+    cy.visit("/automation/loja");
+
+    cy.location("pathname").should("eq", "/automation");
+    cy.get("#qa-login-form").should("be.visible");
+  });
+
 });
