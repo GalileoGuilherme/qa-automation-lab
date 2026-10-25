@@ -58,7 +58,7 @@ describe("Exercícios de autenticação", () => {
   });
 
   it("Cadastrar um novo usuário", () => {
-    // Depois do cadastro, a conta recém-criada deve autenticar sem sair da sessão.
+    // O cadastro autentica a conta e redireciona diretamente para a loja.
     cy.visit("/automation/cadastro");
     cy.fillRegistrationForm({
       name: "Pessoa Teste",
@@ -66,12 +66,6 @@ describe("Exercícios de autenticação", () => {
       password: "TesteQA123",
     });
     cy.get("#qa-register-submit").click();
-    cy.get("#qa-registration-success").should("be.visible");
-    cy.get("#qa-registration-login").click();
-
-    cy.get("#qa-login-email").type("pessoa.teste@example.com");
-    cy.get("#qa-login-password").type("TesteQA123");
-    cy.get("#qa-login-submit").click();
     cy.location("pathname").should("eq", "/automation/loja");
     cy.get("#qa-store-user").should("contain.text", "pessoa.teste@example.com");
   });
@@ -108,7 +102,7 @@ describe("Exercícios de autenticação", () => {
   });
 
   it("Entrar com usuário cadastrado", () => {
-    // Verifica o fluxo completo de cadastro, retorno ao login e autenticação.
+    // Cria a conta, encerra a sessão automática e autentica com as credenciais salvas.
     cy.visit("/automation/cadastro");
     cy.fillRegistrationForm({
       name: "Pessoa Cadastrada",
@@ -116,8 +110,11 @@ describe("Exercícios de autenticação", () => {
       password: "NovaConta123",
     });
     cy.get("#qa-register-submit").click();
-    cy.get("#qa-registration-success").should("be.visible");
-    cy.get("#qa-registration-login").click();
+    cy.location("pathname").should("eq", "/automation/loja");
+    cy.get("#qa-logout-button").click();
+    cy.location("pathname").should("eq", "/automation");
+    cy.get("#qa-login-form").should("be.visible");
+
     cy.get("#qa-login-email").type("nova.conta@example.com");
     cy.get("#qa-login-password").type("NovaConta123");
     cy.get("#qa-login-submit").click();

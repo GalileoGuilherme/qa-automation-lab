@@ -171,7 +171,11 @@ describe("Exercícios da loja", () => {
     cy.get("#qa-suggestion-details")
       .type("Ordenar os produtos pelo preço e conferir a sequência exibida.");
     cy.activateByKeyboard("#qa-submit-suggestion");
-    cy.wait("@sendSuggestion");
+    cy.wait("@sendSuggestion").then(({ request, response }) => {
+      expect(request.method).to.equal("POST");
+      expect(request.url).to.include("/api/v1.0/email/send");
+      expect(response.statusCode).to.equal(200);
+    });
     cy.get("#qa-suggestion-status")
       .should("be.visible")
       .and("contain.text", "Sugestão enviada");
@@ -184,7 +188,11 @@ describe("Exercícios da loja", () => {
     cy.get("#qa-feedback-dialog").should("be.visible");
     cy.get("#qa-feedback-message").type("O catálogo foi fácil de testar.");
     cy.activateByKeyboard("#qa-submit-feedback");
-    cy.wait("@sendFeedback");
+    cy.wait("@sendFeedback").then(({ request, response }) => {
+      expect(request.method).to.equal("POST");
+      expect(request.url).to.include("/api/v1.0/email/send");
+      expect(response.statusCode).to.equal(200);
+    });
     cy.get("#qa-feedback-status")
       .should("be.visible")
       .and("contain.text", "Feedback enviado");

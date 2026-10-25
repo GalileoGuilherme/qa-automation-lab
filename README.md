@@ -73,6 +73,7 @@ npm run cy:open
 ```
 
 Na janela do Cypress, escolha **E2E Testing**, selecione um navegador e clique no arquivo de teste que deseja estudar.
+As requisições interceptadas aparecem no painel **Routes** e no registro de comandos. Clique em um comando `wait @alias` para inspecionar método, URL e resposta da chamada.
 
 ### Executar todos os testes sem interface
 
@@ -209,12 +210,19 @@ cy.expectPrice("#qa-total", "R$ 170,91");
 ### `cy.stubEmailService(alias)`
 
 Intercepta a chamada HTTP do EmailJS e devolve uma resposta de sucesso simulada. Assim, é possível testar feedback e sugestões sem enviar e-mails de verdade.
+No Cypress interativo, a rota aparece no painel **Routes**; os testes também validam método, URL e status da resposta após `cy.wait("@alias")`.
 
 ```js
 cy.stubEmailService("sendFeedback");
 // Preencher e enviar o formulário...
-cy.wait("@sendFeedback");
+cy.wait("@sendFeedback").then(({ request, response }) => {
+  expect(request.method).to.equal("POST");
+  expect(request.url).to.include("/api/v1.0/email/send");
+  expect(response.statusCode).to.equal(200);
+});
 ```
+
+Os fluxos de login e cadastro da aplicação demonstrativa são mantidos em memória no navegador, sem uma chamada HTTP de autenticação para interceptar.
 
 ### `cy.stubClipboard()`
 
@@ -263,10 +271,10 @@ Os nomes abaixo são mantidos iguais aos exercícios exibidos em **Sugestões de
 3. **Validação dos campos obrigatórios do login** — tenta enviar o formulário vazio e confere a validação nativa dos campos.
 4. **Copiar e-mail de demonstração** — confirma o valor enviado à API de clipboard e a mensagem apresentada.
 5. **Copiar senha de demonstração** — confirma a cópia simulada da senha e o feedback da página.
-6. **Cadastrar um novo usuário** — cria uma conta fictícia e entra com ela.
+6. **Cadastrar um novo usuário** — cria uma conta fictícia e confirma o redirecionamento automático para a loja já autenticada.
 7. **Cadastro com senhas diferentes** — valida o erro quando a confirmação não corresponde à senha.
 8. **Cadastro com e-mail já utilizado** — verifica a mensagem para um endereço já cadastrado.
-9. **Entrar com usuário cadastrado** — valida o fluxo de cadastro, retorno ao login e entrada na loja.
+9. **Entrar com usuário cadastrado** — cria uma conta, encerra a sessão automática e valida a entrada com as credenciais recém-cadastradas.
 10. **Acessar loja sem estar autenticado** — confirma que uma visita direta à área protegida redireciona para o login.
 
 ### `cypress/e2e/store.cy.js`
