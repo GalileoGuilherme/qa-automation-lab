@@ -289,8 +289,8 @@ Os nomes abaixo são mantidos iguais aos exercícios exibidos em **Sugestões de
 18. **Aplicar cupom válido** — aplica `CYPRESS10` e verifica o desconto de 10% e o total.
 19. **Aplicar cupom inválido** — verifica a mensagem de cupom inválido e que nenhum desconto foi aplicado.
 20. **Calcular entrega expressa** — confirma o acréscimo de R$ 15,00 e o novo total.
-21. **Finalizar pedido com carrinho vazio** — verifica que a compra não é concluída sem produtos.
-22. **Validar campos obrigatórios do checkout** — com um produto no carrinho, verifica os campos e aceite obrigatórios.
+21. **Finalizar pedido com carrinho vazio** — verifica que o botão de confirmação permanece desativado sem produtos.
+22. **Validar campos obrigatórios do checkout** — com um produto no carrinho, confirma que o botão permanece desativado enquanto endereço e aceite estão pendentes.
 23. **Finalizar pedido com sucesso** — preenche o checkout e valida a confirmação e o número do pedido.
 24. **Encerrar sessão** — sai da loja e confirma o retorno à página de login.
 25. **Navegar pela página usando somente o teclado** — usa Tab, Enter e Espaço para navegar pelos controles e diálogos; também verifica progresso, feedback e sugestão sem enviar e-mails reais.

@@ -96,27 +96,27 @@ describe("Exercícios da loja", () => {
   });
 
   it("Finalizar pedido com carrinho vazio", () => {
-    // O formulário válido não deve concluir a compra sem um item no carrinho.
+    // O formulário pode estar preenchido, mas sem produtos o botão continua desativado.
     cy.get("#qa-checkout-address").type("Rua de Testes, 123");
     cy.get("#qa-terms").check();
-    cy.get("#qa-checkout-submit").click();
 
-    cy.get("#qa-store-feedback")
+    cy.get("#qa-checkout-submit").should("be.disabled");
+    cy.get("#qa-checkout-guidance")
       .should("be.visible")
-      .and("contain.text", "Adicione ao menos um produto");
-    cy.get("#qa-order-confirmation").should("not.exist");
+      .and("contain.text", "Adicione um produto");
+    cy.get("#qa-order-confirmation").should("not.be.visible");
   });
 
   it("Validar campos obrigatórios do checkout", () => {
-    // Com um produto, endereço e aceite são obrigatórios para submeter o pedido.
+    // Com um produto, o botão fica desativado enquanto endereço e aceite estão pendentes.
     cy.addProductToCart("fone-bluetooth");
-    cy.get("#qa-checkout-submit").click();
 
     cy.get("#qa-checkout-address").should(($input) => {
       expect($input[0].validity.valid).to.be.false;
     });
     cy.get("#qa-terms").should("not.be.checked");
-    cy.get("#qa-order-confirmation").should("not.exist");
+    cy.get("#qa-checkout-submit").should("be.disabled");
+    cy.get("#qa-order-confirmation").should("not.be.visible");
   });
 
   it("Finalizar pedido com sucesso", () => {
