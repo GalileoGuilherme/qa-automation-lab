@@ -4,6 +4,8 @@
   "private": true,
   "description": "Cypress end-to-end tests for the Automação QA practice store.",
   "scripts": {
+    "test": "cypress run",
+    "test:chrome": "cypress run --browser chrome",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:run:chrome": "cypress run --browser chrome"

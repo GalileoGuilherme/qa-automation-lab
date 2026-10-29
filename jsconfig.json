@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "moduleResolution": "node",
+    "types": ["cypress", "cypress-real-events"]
+  },
+  "include": [
+    "cypress/**/*.js",
+    "cypress/support/**/*.d.ts",
+    "cypress.config.js"
+  ]
+}
+

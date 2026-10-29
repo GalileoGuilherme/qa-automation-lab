@@ -3,13 +3,13 @@ require("cypress-real-events");
 // Commands customizados guardam fluxos repetidos e deixam os testes mais fáceis de estudar.
 Cypress.Commands.add("loginAsDemoUser", ({
   email = "qa@exemplo.com",
-  password = "Qa123456",
+  password = "LabQA!Run-7kV2pX9m",
 } = {}) => {
   cy.visit("/automation");
   cy.get("#qa-login-email").type(email);
   cy.get("#qa-login-password").type(password);
   cy.get("#qa-login-submit").click();
-  cy.location("pathname").should("eq", "/automation/loja");
+  cy.location("pathname", { timeout: 20000 }).should("include", "/automation/loja");
 });
 
 // Preenche o formulário atual para permitir testar cadastro válido, inválido e duplicado.

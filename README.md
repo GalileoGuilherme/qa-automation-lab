@@ -166,7 +166,7 @@ Abre a página de login, preenche as credenciais e verifica que a navegação ch
 
 ```js
 cy.loginAsDemoUser();
-cy.loginAsDemoUser({ email: "qa@exemplo.com", password: "Qa123456" });
+cy.loginAsDemoUser({ email: "qa@exemplo.com", password: "LabQA!Run-7kV2pX9m" });
 ```
 
 Se nenhum argumento for fornecido, usa a conta fictícia padrão da página. A senha é apenas uma credencial de demonstração, não uma senha pessoal.

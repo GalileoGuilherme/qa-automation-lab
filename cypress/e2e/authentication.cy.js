@@ -51,7 +51,7 @@ describe("Exercícios de autenticação", () => {
     cy.stubClipboard().then((writeText) => {
       cy.get("#qa-copy-password").click();
 
-      cy.wrap(writeText).should("have.been.calledWith", "Qa123456");
+      cy.wrap(writeText).should("have.been.calledWith", "LabQA!Run-7kV2pX9m");
       cy.get("#qa-copy-feedback")
         .should("contain.text", "copiado para a área de transferência");
     });
